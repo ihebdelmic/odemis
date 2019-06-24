@@ -277,8 +277,7 @@ class RepetitionSelectOverlay(WorldSelectOverlay):
         self._roa = roa
         self._scanner = scanner
         if roa:
-            if not scanner:
-                raise ValueError("scanner is required when roa VA passed")
+
             self._roa.subscribe(self.on_roa, init=True)
 
         self._bmp = None  # used to cache repetition with FILL_POINT
@@ -401,7 +400,10 @@ class RepetitionSelectOverlay(WorldSelectOverlay):
             if self.active:
                 if self.get_size() != (None, None):
                     phys_rect = self.get_physical_sel()
-                    rel_rect = self.convert_roi_phys_to_ratio(phys_rect)
+                    if self._scanner:
+                        rel_rect = self.convert_roi_phys_to_ratio(phys_rect)
+                    else:
+                        rel_rect = phys_rect
 
                     # Update VA. We need to unsubscribe to be sure we don't received
                     # intermediary values as the VA is modified by the stream further on, and
